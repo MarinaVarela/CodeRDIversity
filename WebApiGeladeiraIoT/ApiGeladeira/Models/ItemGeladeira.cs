@@ -4,7 +4,6 @@ namespace ApiGeladeira.Services
 {
     public class ItemGeladeira : ElementoGeladeira
     {
-        private static string? Item;
         public string Nome { get; set; }
 
         public ItemGeladeira(int andar, int container, int posicao, string nome)

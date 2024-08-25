@@ -1,4 +1,7 @@
-﻿namespace ApiGeladeira.Services
+﻿using ApiGeladeira.DTOs;
+using System.Xml.Linq;
+
+namespace ApiGeladeira.Services
 {
     public class Geladeira
     {
@@ -13,34 +16,43 @@
             return itens;
         }
 
+        public string? ObterItemPorNome(string nome)
+        {
+            var item = _itens.FirstOrDefault(i => i.Nome.Equals(nome, StringComparison.OrdinalIgnoreCase));
+
+            if (item == null)
+                return null;
+
+            return item.Descricao();
+        }
+
         public string AdicionarElemento(ElementoGeladeira elemento)
         {
             if (elemento.Posicao < 1 || elemento.Posicao > 4)
-                return $"Adicionar na posição {elemento.Posicao} é inválido. As posições válidas são de 1 a 4.";
+                return $"A geladeira só tem quatro posições. E a {elemento.Posicao} não é válida.";
 
             var itemExistente = _itens
                 .FirstOrDefault(i => i.Andar == elemento.Andar && i.Container == elemento.Container && i.Posicao == elemento.Posicao);
 
             if (itemExistente != null)
-                return $"Posição {elemento.Posicao} no andar {elemento.Andar} e container {elemento.Container} já está ocupada.";
+                return $"Essa posição já está ocupada.";
 
             _itens.Add((ItemGeladeira)elemento);
-            return $"Item adicionado na posição {elemento.Posicao}, andar {elemento.Andar}, container {elemento.Container}.";
+            var itemAdicionado = _itens.Last();
+
+            return $"{itemAdicionado.Nome} foi adicionado(a) na geladeira.";
         }
 
-        public string AtualizarElemento(int andarNumero, int containerNumero, int posicao, string novoNome)
+        public string AtualizarElemento(UpdateItemGeladeiraDTO atualizarItem)
         {
-            var item = _itens
-                .FirstOrDefault(i => i.Andar == andarNumero && i.Container == containerNumero && i.Posicao == posicao);
+            var itemExistente = _itens
+                .FirstOrDefault(i => i.Andar == atualizarItem.Andar && i.Container == atualizarItem.Container && i.Posicao == atualizarItem.Posicao);
 
-            if (item == null)
-                return $"Não existe nenhum item na posição {posicao} do andar {andarNumero} e container {containerNumero}.";
+            if (itemExistente is null)
+                return $"Não existe esse item na geladeira. Não foi possível atualizar a geladeira.";
 
-            if (string.IsNullOrWhiteSpace(novoNome))
-                return "O nome do item não pode ser vazio ou nulo.";
-
-            item.Nome = novoNome;
-            return $"Item na posição {posicao}, andar {andarNumero} e container {containerNumero} atualizado com sucesso.";
+            itemExistente.Nome = atualizarItem.Nome;
+            return $"{itemExistente.Nome} foi atualizado para o item {atualizarItem.Nome} na geladeira.";
         }
 
         public string RemoverElemento(int andarNumero, int containerNumero, int posicao)
@@ -49,10 +61,10 @@
                 .FirstOrDefault(i => i.Andar == andarNumero && i.Container == containerNumero && i.Posicao == posicao);
 
             if (item == null)
-                return $"Não existe nenhum item na posição {posicao} do andar {andarNumero} e container {containerNumero}.";
+                return $"Não existe esse item na geladeira.";
 
             _itens.Remove(item);
-            return $"Item removido da posição {posicao}, andar {andarNumero} e container {containerNumero}.";
+            return $"{item.Nome} foi removido da posição {posicao}, andar {andarNumero} e container {containerNumero} da geladeira.";
         }
 
         public string RemoverTodosElementos()
@@ -64,7 +76,7 @@
 
             _itens.Clear();
 
-            return $"{quantidadeRemovida} item(ns) removido(s) da geladeira.";
+            return $"Faxina feita. {quantidadeRemovida} item(ns) foram removido(s) da geladeira.";
         }
     }
 }
