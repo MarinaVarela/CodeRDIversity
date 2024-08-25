@@ -52,7 +52,7 @@ namespace ApiGeladeira.Services
                 return $"Não existe esse item na geladeira. Não foi possível atualizar a geladeira.";
 
             itemExistente.Nome = atualizarItem.Nome;
-            return $"{itemExistente.Nome} foi atualizado para o item {atualizarItem.Nome} na geladeira.";
+            return $"A geladeira foi atualizada com o item {atualizarItem.Nome}.";
         }
 
         public string RemoverElemento(int andarNumero, int containerNumero, int posicao)
