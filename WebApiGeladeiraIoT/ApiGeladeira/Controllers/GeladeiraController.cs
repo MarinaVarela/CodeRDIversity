@@ -65,7 +65,7 @@ namespace ApiGeladeira.Controllers
 
                 var resultado = _geladeira.AdicionarElemento(itemGeladeira);
 
-                if (resultado.Contains("inválido") || resultado.Contains("ocupada"))
+                if (resultado.Contains("não é válida") || resultado.Contains("ocupada"))
                     return Conflict(new { Mensagem = resultado });
 
                 return Ok(new { Mensagem = resultado });
