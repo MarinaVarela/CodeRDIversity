@@ -1,5 +1,7 @@
 ﻿using ApiGeladeira.DTOs;
-using ApiGeladeira.Services;
+using ApiGeladeira.Models;
+using Application.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiGeladeira.Controllers
@@ -8,137 +10,205 @@ namespace ApiGeladeira.Controllers
     [ApiController]
     public class GeladeiraController : ControllerBase
     {
-        private readonly Geladeira _geladeira;
+        private readonly GeladeiraService _geladeiraService;
+        private readonly IMapper _mapper;
 
-        public GeladeiraController(Geladeira geladeira)
+        public GeladeiraController(GeladeiraService geladeiraService, IMapper mapper)
         {
-            _geladeira = geladeira;
+            _geladeiraService = geladeiraService;
+            _mapper = mapper;
         }
 
         [HttpOptions("opcoes-disponiveis")]
         public IActionResult OpcoesDisponiveis()
         {
-            Response.Headers.Append("Allow", "GET, POST, PUT, DELETE, OPTIONS");
+            Response.Headers.Append("Allow", "GET, POST, PATCH, DELETE, OPTIONS");
             return Ok();
         }
 
         [HttpGet("obter-itens")]
-        public IActionResult ObterItens()
+        public async Task<IActionResult> ObterItens()
         {
             try
             {
-                var obterItens = _geladeira.ObterItens();
-                if (obterItens is null)
-                    return NoContent();
-
-                return Ok(new { Data = obterItens, Mensagem = $"Aproveite seu(s) item(ns)." });
+                var obterItens = await _geladeiraService.ObterItens();
+                return Ok(new { Data = obterItens, Mensagem = "Aproveite seu(s) item(ns)." });
             }
-            catch { return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar."); }
+            catch (InvalidDataException)
+            {
+                return NoContent();
+            }
+            catch
+            {
+                return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar.");
+            }
         }
 
-        [HttpGet("procurar-na-geladeira")]
-        public IActionResult ObterItemPorNome(string nome)
+        [HttpGet("obter-item/{id:int}")]
+        public async Task<IActionResult> ObterItemPorId(int id)
+        {
+            try
+            {
+                var obterItem = await _geladeiraService.ObterItemPorId(id);
+                if (obterItem is null)
+                    return NotFound(new { Mensagem = $"Item {id} não encontrado." });
+
+                return Ok(new { Data = obterItem, Mensagem = "Aproveite seu item." });
+            }
+            catch
+            {
+                return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar.");
+            }
+        }
+
+        [HttpGet("procurar-na-geladeira/{nome}")]
+        public async Task<IActionResult> ObterItemPorNome(string nome)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(nome))
                     return BadRequest("Esqueceu o que ia procurar na geladeira?");
 
-                var item = _geladeira.ObterItemPorNome(nome);
+                var item = await _geladeiraService.ObterItemPorNome(nome);
+
                 if (item is null)
                     return NotFound(new { Mensagem = $"Não tem {nome} na geladeira." });
 
                 return Ok(new { Data = item, Mensagem = $"Aproveite o(a) {nome}." });
             }
-            catch { return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar."); }
+            catch
+            {
+                return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar.");
+            }
         }
 
         [HttpPost("adicionar-item")]
-        public IActionResult AdicionarItem([FromBody] CreateItemGeladeiraDTO item)
+        public async Task<IActionResult> AdicionarItem([FromBody] CreateGeladeiraDTO item)
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest("As informações do item adicionado não são válidas.");
+                var inserirItem = _mapper.Map<ItemGeladeira>(item);
 
-                var itemGeladeira = new ItemGeladeira(item.Andar, item.Container, item.Posicao, item.Nome);
+                await _geladeiraService.AdicionarItemAsync(inserirItem);
 
-                var resultado = _geladeira.AdicionarElemento(itemGeladeira);
-
-                if (resultado.Contains("não é válida") || resultado.Contains("ocupada"))
-                    return Conflict(new { Mensagem = resultado });
-
-                return Ok(new { Mensagem = resultado });
+                return Ok(new { Mensagem = $"{item.Nome} está guardado(a) no andar {item.Andar}, container {item.Container} e posição {item.Posicao} da geladeira." });
             }
-            catch { return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar."); }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar.");
+            }
         }
 
-        [HttpPut("atualizar-item")]
-        public IActionResult AtualizarItem([FromBody] UpdateItemGeladeiraDTO atualizarItem)
+        [HttpPatch("atualizar-item")]
+        public async Task<IActionResult> AtualizarItem([FromBody] UpdateGeladeiraDTO item)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest("As informações de atualização não são válidas.");
 
-                var itemGeladeira = new ItemGeladeira(atualizarItem.Andar, atualizarItem.Container, atualizarItem.Posicao, atualizarItem.Nome);
+                var atualizarItem = _mapper.Map<ItemGeladeira>(item);
 
+                await _geladeiraService.AtualizarItem(atualizarItem);
 
-                var resultado = _geladeira.AtualizarElemento(atualizarItem);
-
-                if (resultado.Contains("Não existe"))
-                    return NotFound(new { Mensagem = resultado });
-
-                return Ok(new { Mensagem = resultado });
+                return Ok(new { Mensagem = $"{item.Nome} foi atualizado para andar {item.Andar}, container {item.Container} e posição {item.Posicao} da geladeira." });
             }
-            catch { return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar."); }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar.");
+            }
         }
 
-        [HttpDelete("remover-item")]
-        public IActionResult RemoverItem(int andar, int container, int posicao)
+        [HttpDelete("remover-item/{id:int}")]
+        public async Task<IActionResult> RemoverItem(int id)
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest("As informações do item a ser removido não são válidas.");
-
-                var resultado = _geladeira.RemoverElemento(andar, container, posicao);
-
-                if (resultado.Contains("Não existe"))
-                    return NotFound(new { Mensagem = resultado });
-
-                return Ok(new { Mensagem = resultado });
+                await _geladeiraService.RemoverItem(id);
+                return Ok(new { Mensagem = "Item removido com sucesso." });
             }
-            catch { return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar."); }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { Mensagem = $"Item {id} não encontrado." });
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar.");
+            }
         }
 
         [HttpDelete("remover-tudo")]
-        public IActionResult RemoverTodosElementos()
+        public async Task<IActionResult> RemoverTodosElementos()
         {
             try
             {
-                var resultado = _geladeira.RemoverTodosElementos();
-
-                if (resultado.Contains("Nenhum item"))
-                    return NoContent();
-
-                return Ok(new { Mensagem = resultado });
+                int quantItensExcluidos = await _geladeiraService.RemoverTodosItens();
+                return Ok(new { Mensagem = $"Faxina feita. {quantItensExcluidos} foi(foram) removido(s) com sucesso." });
             }
-            catch { return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar."); }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return StatusCode(500, "Ops! Acho que a porta da geladeira travou. Chame o técnico para ajustar.");
+            }
         }
     }
 }
 
 /*
-O projeto de api da geladeira foi pensado aproveitando algumas classes da aplicação de console, criada anteriormente.
-No entanto, o serviço, responsável pela regra de negócio, foi simplificado.
+O projeto de api da geladeira foi refatorado completamente para simplificar e enxugar o código.
+Ajustado também a organização da api e bibliotecas de classes.
 
-As mensagens de erro foram melhoradas para serem passadas de uma forma mais amigável.
+Migration adicionada com os comandos:
 
-Ao program foi adicionando um Singleton para a geladeira, para que a mesma instância seja utilizada em todas as requisições.
+- Add-Migration CriacaoGeladeira
+- Update-Database (use db_geladeira | select * from ItensGeladeira)
+- Script-Migration (Para gerar o script de criação da tabela)
 
-Além disso, ao invés de um Get by ID, pensei que ficaria mais interessante um get por nome.
-Assim permitiria ao usuário vasculhar a geladeira.
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+CREATE TABLE [ItensGeladeira] (
+    [Id] int NOT NULL IDENTITY,
+    [Andar] int NOT NULL,
+    [Container] int NOT NULL,
+    [Posicao] int NOT NULL,
+    [Nome] nvarchar(100) NOT NULL,
+    CONSTRAINT [PK_ItensGeladeira] PRIMARY KEY ([Id])
+);
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20240902223212_CriacaoGeladeira', N'8.0.8');
+GO
+
+COMMIT;
+GO
+
  */
 
 // Exercício por Marina Varela
