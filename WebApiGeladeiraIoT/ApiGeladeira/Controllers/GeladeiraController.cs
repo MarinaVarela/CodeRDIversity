@@ -168,3 +168,47 @@ namespace ApiGeladeira.Controllers
         }
     }
 }
+
+/*
+O projeto de api da geladeira foi refatorado completamente para simplificar e enxugar o código.
+Ajustado também a organização da api e bibliotecas de classes.
+
+Migration adicionada com os comandos:
+
+- Add-Migration CriacaoGeladeira
+- Update-Database (use db_geladeira | select * from ItensGeladeira)
+- Script-Migration (Para gerar o script de criação da tabela)
+
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+CREATE TABLE [ItensGeladeira] (
+    [Id] int NOT NULL IDENTITY,
+    [Andar] int NOT NULL,
+    [Container] int NOT NULL,
+    [Posicao] int NOT NULL,
+    [Nome] nvarchar(100) NOT NULL,
+    CONSTRAINT [PK_ItensGeladeira] PRIMARY KEY ([Id])
+);
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20240902223212_CriacaoGeladeira', N'8.0.8');
+GO
+
+COMMIT;
+GO
+
+ */
+
+// Exercício por Marina Varela
