@@ -15,25 +15,28 @@ namespace ApiGeladeira.Repository
 
         public async Task<List<ItemGeladeira>> ObterItens()
         {
-            return await _context.ItensGeladeira.ToListAsync();
+            var itens = await _context.ItensGeladeira.ToListAsync();
+            if (!itens.Any())
+            {
+                throw new InvalidDataException();
+            }
+            return itens;
         }
 
         public async Task<ItemGeladeira?> ObterItemPorId(int id)
         {
-            return await _context.ItensGeladeira.FindAsync(id);
+            var itemExistente = await _context.ItensGeladeira.FindAsync(id);
+            if (itemExistente is null)
+                return null;
+            return itemExistente;
         }
 
         public async Task<ItemGeladeira?> ObterItemPorNome(string nome)
         {
-            try
-            {
-                return await _context.ItensGeladeira
-                                  .FirstOrDefaultAsync(i => i.Nome.Equals(nome, StringComparison.OrdinalIgnoreCase));
-            }
-            catch
-            {
+            var procurarGeladeira = await _context.ItensGeladeira.FirstOrDefaultAsync(i => i.Nome.Equals(nome));
+            if (procurarGeladeira is null)
                 return null;
-            }
+            return procurarGeladeira;
         }
 
         public async Task<ItemGeladeira?> AdicionarItem(ItemGeladeira item)

@@ -1,7 +1,5 @@
 ﻿using ApiGeladeira.Models;
 using ApiGeladeira.Repository;
-using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
 
 namespace Application.Services
 {
@@ -15,18 +13,13 @@ namespace Application.Services
 
         public async Task<List<ItemGeladeira>> ObterItens()
         {
-           var itens= await _repository.ObterItens();
-            if (!itens.Any()) {
-                throw new InvalidDataException();
-            }
+            var itens = await _repository.ObterItens();
             return itens;
         }
 
         public Task<ItemGeladeira?> ObterItemPorId(int id)
         {
             var itemExistente = _repository.ObterItemPorId(id);
-            if (itemExistente is null)
-                throw new KeyNotFoundException();
             return itemExistente;
         }
 
@@ -53,7 +46,7 @@ namespace Application.Services
         {
             var checarItem = await _repository.ObterItemPorId(item.Id);
             if (checarItem is null)
-                throw new ApplicationException($"{item.Nome} não está na geladeira.");
+                throw new ApplicationException($"Item inválido.");
 
             var resultado = await _repository.AtualizarItem(item);
             if (resultado is null)

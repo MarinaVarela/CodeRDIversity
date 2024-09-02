@@ -9,8 +9,7 @@ namespace Application.Mapping
         public MappingProfile()
         {
             CreateMap<CreateGeladeiraDTO, ItemGeladeira>();
-            CreateMap<UpdateGeladeiraDTO, ItemGeladeira>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<UpdateGeladeiraDTO, ItemGeladeira>();
         }
     }
 }

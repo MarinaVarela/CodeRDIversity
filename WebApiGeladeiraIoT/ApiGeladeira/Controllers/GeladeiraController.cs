@@ -22,7 +22,7 @@ namespace ApiGeladeira.Controllers
         [HttpOptions("opcoes-disponiveis")]
         public IActionResult OpcoesDisponiveis()
         {
-            Response.Headers.Append("Allow", "GET, POST, PUT, DELETE, OPTIONS");
+            Response.Headers.Append("Allow", "GET, POST, PATCH, DELETE, OPTIONS");
             return Ok();
         }
 
@@ -50,11 +50,10 @@ namespace ApiGeladeira.Controllers
             try
             {
                 var obterItem = await _geladeiraService.ObterItemPorId(id);
+                if (obterItem is null)
+                    return NotFound(new { Mensagem = $"Item {id} não encontrado." });
+
                 return Ok(new { Data = obterItem, Mensagem = "Aproveite seu item." });
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { Mensagem = $"Item {id} não encontrado." });
             }
             catch
             {
@@ -92,7 +91,7 @@ namespace ApiGeladeira.Controllers
 
                 await _geladeiraService.AdicionarItemAsync(inserirItem);
 
-                return Ok(new { Mensagem = $"{item.Nome} está grardado(a) no andar {item.Andar}, container {item.Container} e posição {item.Posicao} da geladeira." });
+                return Ok(new { Mensagem = $"{item.Nome} está guardado(a) no andar {item.Andar}, container {item.Container} e posição {item.Posicao} da geladeira." });
             }
             catch (ApplicationException ex)
             {
@@ -156,7 +155,7 @@ namespace ApiGeladeira.Controllers
             try
             {
                 int quantItensExcluidos = await _geladeiraService.RemoverTodosItens();
-                return Ok(new { Mensagem = $"Faxina feita. {quantItensExcluidos} foram removidos com sucesso." });
+                return Ok(new { Mensagem = $"Faxina feita. {quantItensExcluidos} foi(foram) removido(s) com sucesso." });
             }
             catch (ApplicationException ex)
             {
