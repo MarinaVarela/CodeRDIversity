@@ -7,6 +7,7 @@ namespace Application.Services
     {
         private readonly IGeladeiraRepository _repository;
         public GeladeiraService(IGeladeiraRepository repository)
+
         {
             _repository = repository;
         }

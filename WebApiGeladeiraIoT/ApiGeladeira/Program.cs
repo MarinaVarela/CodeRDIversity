@@ -4,6 +4,8 @@ using Infrastructure.Repositories;
 using IoC;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using ApiGeladeira.Repository;
+using Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,14 @@ builder.Services.AddSwaggerGen(options =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
 });
+
+builder.Services.AddScoped<GeladeiraRepository>();
+builder.Services.AddScoped<GeladeiraService>();
+
+builder.Services.AddDbContext<GeladeiraContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 

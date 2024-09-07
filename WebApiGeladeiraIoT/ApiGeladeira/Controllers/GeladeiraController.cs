@@ -2,6 +2,7 @@
 using ApiGeladeira.Models;
 using AutoMapper;
 using Domain.Interfaces;
+using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiGeladeira.Controllers
@@ -45,6 +46,7 @@ namespace ApiGeladeira.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet("obter-itens")]
         public async Task<IActionResult> ObterItens()
         {
             try
@@ -111,7 +113,6 @@ namespace ApiGeladeira.Controllers
                     return BadRequest("Esqueceu o que ia procurar na geladeira?");
 
                 var item = await _service.ObterItemPorNome(nome);
-
                 if (item is null)
                     return NotFound(new { Mensagem = $"Não tem {nome} na geladeira." });
 
@@ -142,7 +143,7 @@ namespace ApiGeladeira.Controllers
                 var inserirItem = _mapper.Map<ItemGeladeira>(item);
 
                 await _service.AdicionarItemAsync(inserirItem);
-
+                
                 return Ok(new { Mensagem = $"{item.Nome} está guardado(a) no andar {item.Andar}, container {item.Container} e posição {item.Posicao} da geladeira." });
             }
             catch (ApplicationException ex)
@@ -208,6 +209,7 @@ namespace ApiGeladeira.Controllers
             try
             {
                 await _service.RemoverItem(id);
+
                 return Ok(new { Mensagem = "Item removido com sucesso." });
             }
             catch (KeyNotFoundException)
@@ -239,6 +241,7 @@ namespace ApiGeladeira.Controllers
             try
             {
                 int quantItensExcluidos = await _service.RemoverTodosItens();
+
                 return Ok(new { Mensagem = $"Faxina feita. {quantItensExcluidos} foi(foram) removido(s) com sucesso." });
             }
             catch (ApplicationException ex)
@@ -251,4 +254,5 @@ namespace ApiGeladeira.Controllers
             }
         }
     }
-}
+
+// Exercício por Marina Varela
