@@ -46,7 +46,6 @@ namespace ApiGeladeira.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet("obter-itens")]
         public async Task<IActionResult> ObterItens()
         {
             try
@@ -133,7 +132,7 @@ namespace ApiGeladeira.Controllers
         /// </remarks>
         /// <returns>Uma resposta confirmando a adição do item e sua localização na geladeira.</returns>
         [HttpPost()]
-        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AdicionarItem([FromBody] CreateGeladeiraDTO item)
@@ -143,7 +142,7 @@ namespace ApiGeladeira.Controllers
                 var inserirItem = _mapper.Map<ItemGeladeira>(item);
 
                 await _service.AdicionarItemAsync(inserirItem);
-                
+
                 return Ok(new { Mensagem = $"{item.Nome} está guardado(a) no andar {item.Andar}, container {item.Container} e posição {item.Posicao} da geladeira." });
             }
             catch (ApplicationException ex)
@@ -235,6 +234,7 @@ namespace ApiGeladeira.Controllers
         /// <returns>Uma resposta confirmando a remoção de todos os itens ou uma mensagem de erro.</returns>
         [HttpDelete("remover-tudo")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoverTodosElementos()
         {
@@ -254,5 +254,6 @@ namespace ApiGeladeira.Controllers
             }
         }
     }
+}
 
 // Exercício por Marina Varela
