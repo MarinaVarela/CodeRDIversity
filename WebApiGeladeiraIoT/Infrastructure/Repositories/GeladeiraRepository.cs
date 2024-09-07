@@ -1,10 +1,12 @@
 ﻿using ApiGeladeira.Models;
+using Domain.Interfaces;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiGeladeira.Repository
 {
-    public class GeladeiraRepository
+    public class GeladeiraRepository : IGeladeiraRepository
+
     {
         private readonly GeladeiraContext _context;
 

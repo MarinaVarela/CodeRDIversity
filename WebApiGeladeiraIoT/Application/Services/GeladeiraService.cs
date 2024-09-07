@@ -1,12 +1,13 @@
 ﻿using ApiGeladeira.Models;
-using ApiGeladeira.Repository;
+using Domain.Interfaces;
 
 namespace Application.Services
 {
-    public class GeladeiraService
+    public class GeladeiraService : IGeladeiraService
     {
-        private readonly GeladeiraRepository _repository;
-        public GeladeiraService(GeladeiraRepository repository)
+        private readonly IGeladeiraRepository _repository;
+        public GeladeiraService(IGeladeiraRepository repository)
+
         {
             _repository = repository;
         }
@@ -31,6 +32,7 @@ namespace Application.Services
         public async Task<ItemGeladeira?> AdicionarItemAsync(ItemGeladeira item)
         {
             var checarItem = await ObterItemPorNome(item.Nome);
+
             if (checarItem is not null)
                 throw new ApplicationException($"O item {item.Nome} já está na geladeira.");
 
