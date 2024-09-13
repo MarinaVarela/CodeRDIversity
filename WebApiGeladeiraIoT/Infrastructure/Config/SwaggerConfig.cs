@@ -26,6 +26,7 @@ namespace Infrastructure.Config
                             <H4> HTTP Codes Mapped in This Application: </H4>
                                 <ul>
                                     <li><b>200:</b> Request was successful.</li>
+                                    <li><b>201:</b> Created a new resource.</li>
                                     <li><b>204:</b> Request was successful, but there is no content to return.</li>
                                     <li><b>400:</b> Bad request, for example, when there is a validation error or incorrect information.</li>
                                     <li><b>404:</b> Not found, for example, when an item is not found in the refrigerator.</li>
