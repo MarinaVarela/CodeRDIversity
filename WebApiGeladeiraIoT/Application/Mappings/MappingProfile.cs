@@ -1,5 +1,5 @@
-﻿using ApiGeladeira.DTOs;
-using ApiGeladeira.Models;
+﻿using ApiRefrigerator.DTOs;
+using ApiRefrigerator.Models;
 using AutoMapper;
 
 namespace Application.Mapping
@@ -8,8 +8,8 @@ namespace Application.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<CreateGeladeiraDTO, ItemGeladeira>();
-            CreateMap<UpdateGeladeiraDTO, ItemGeladeira>();
+            CreateMap<CreateRefrigeratorItemDTO, Refrigerator>();
+            CreateMap<UpdateRefrigeratorItemDTO, Refrigerator>();
         }
     }
 }

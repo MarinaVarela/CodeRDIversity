@@ -1,4 +1,4 @@
-﻿using ApiGeladeira.Repository;
+﻿using ApiRefrigerator.Repository;
 using Application.Services;
 using Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,8 +9,8 @@ namespace IoC
     {
         public static void RegisterServices(IServiceCollection services)
         {
-            services.AddScoped<IGeladeiraService, GeladeiraService>();
-            services.AddScoped<IGeladeiraRepository, GeladeiraRepository>();
+            services.AddScoped<IRefrigeratorService, RefrigeratorService>();
+            services.AddScoped<IRefrigeratorRepository, RefrigeratorRepository>();
         }
     }
 }

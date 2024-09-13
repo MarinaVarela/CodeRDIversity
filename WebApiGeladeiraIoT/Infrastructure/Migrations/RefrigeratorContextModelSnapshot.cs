@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Migrations
 {
-    [DbContext(typeof(GeladeiraContext))]
-    partial class GeladeiraContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(RefrigeratorContext))]
+    partial class RefrigeratorContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ApiGeladeira.Models.ItemGeladeira", b =>
+            modelBuilder.Entity("ApiRefrigerator.Models.Refrigerator", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,23 +29,23 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Andar")
-                        .HasColumnType("int");
-
                     b.Property<int>("Container")
                         .HasColumnType("int");
 
-                    b.Property<string>("Nome")
+                    b.Property<int>("Floor")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("Posicao")
+                    b.Property<int>("Position")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ItensGeladeira");
+                    b.ToTable("Refrigerator");
                 });
 #pragma warning restore 612, 618
         }
