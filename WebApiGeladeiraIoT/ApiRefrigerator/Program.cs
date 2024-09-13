@@ -4,7 +4,7 @@ using Infrastructure.Repositories;
 using IoC;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using ApiGeladeira.Repository;
+using ApiRefrigerator.Repository;
 using Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 DependencyInjection.RegisterServices(builder.Services);
 
-builder.Services.AddDbContext<GeladeiraContext>(options =>
+builder.Services.AddDbContext<RefrigeratorContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -28,10 +28,10 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(xmlPath);
 });
 
-builder.Services.AddScoped<GeladeiraRepository>();
-builder.Services.AddScoped<GeladeiraService>();
+builder.Services.AddScoped<RefrigeratorRepository>();
+builder.Services.AddScoped<RefrigeratorService>();
 
-builder.Services.AddDbContext<GeladeiraContext>(options =>
+builder.Services.AddDbContext<RefrigeratorContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));

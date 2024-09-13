@@ -1,6 +1,0 @@
-@ApiGeladeira_HostAddress = http://localhost:5177
-
-GET {{ApiGeladeira_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

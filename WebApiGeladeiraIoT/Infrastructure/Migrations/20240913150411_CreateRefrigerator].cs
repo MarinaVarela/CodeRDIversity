@@ -5,25 +5,25 @@
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CriacaoGeladeira : Migration
+    public partial class CreateRefrigerator : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ItensGeladeira",
+                name: "Refrigerator",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Andar = table.Column<int>(type: "int", nullable: false),
+                    Floor = table.Column<int>(type: "int", nullable: false),
                     Container = table.Column<int>(type: "int", nullable: false),
-                    Posicao = table.Column<int>(type: "int", nullable: false),
-                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Position = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItensGeladeira", x => x.Id);
+                    table.PrimaryKey("PK_Refrigerator", x => x.Id);
                 });
         }
 
@@ -31,7 +31,7 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ItensGeladeira");
+                name: "Refrigerator");
         }
     }
 }
