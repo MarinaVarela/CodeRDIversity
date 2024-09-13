@@ -131,18 +131,20 @@ namespace ApiRefrigerator.Controllers
         /// </remarks>
         /// <returns>A response confirming the addition of the item and its location in the refrigerator.</returns>
         [HttpPost()]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> InsertItem([FromBody] CreateRefrigeratorItemDTO item)
         {
             try
             {
-                var inserirItem = _mapper.Map<Refrigerator>(item);
+                var createItem = _mapper.Map<Refrigerator>(item);
+                var insertedItem = await _service.InsertItemAsync(createItem);
 
-                await _service.InsertItemAsync(inserirItem);
-
-                return Ok(new { Mensagem = $"{item.Name} is stored on floor {item.Floor}, container {item.Container}, and position {item.Position} in the refrigerator." });
+                return CreatedAtAction(nameof(InsertItem), new
+                {
+                    Mensagem = $"{item.Name} is stored on floor {item.Floor}, container {item.Container}, and position {item.Position} in the refrigerator."
+                }, insertedItem);
             }
             catch (ApplicationException ex)
             {
