@@ -1,4 +1,4 @@
-﻿using ApiRefrigerator.DTOs;
+using ApiRefrigerator.DTOs;
 using ApiRefrigerator.Models;
 using AutoMapper;
 using Domain.Interfaces;
@@ -122,7 +122,7 @@ namespace ApiRefrigerator.Controllers
             }
         }
 
-        /// <summary>
+                /// <summary>
         /// Adds a new item to the refrigerator.
         /// </summary>
         /// <param name="item">The DTO containing the data for the item to be added.</param>
@@ -191,7 +191,6 @@ namespace ApiRefrigerator.Controllers
         /// <summary>
         /// Updates an existing item in the refrigerator.
         /// </summary>
-        /// <param name="id">The ID of the item.</param>
         /// <param name="item">The DTO containing the data for the item to be updated.</param>
         /// <remarks>
         /// This endpoint updates an existing item in the refrigerator based on the provided data.
@@ -285,4 +284,4 @@ namespace ApiRefrigerator.Controllers
     }
 }
 
-// Exercício por Marina Varela
+// Developed by Marina Varela
