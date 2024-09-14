@@ -1,4 +1,4 @@
-﻿using ApiRefrigerator.DTOs;
+using ApiRefrigerator.DTOs;
 using ApiRefrigerator.Models;
 using AutoMapper;
 using Domain.Interfaces;
@@ -122,7 +122,7 @@ namespace ApiRefrigerator.Controllers
             }
         }
 
-        /// <summary>
+                /// <summary>
         /// Adds a new item to the refrigerator.
         /// </summary>
         /// <param name="item">The DTO containing the data for the item to be added.</param>
@@ -131,20 +131,18 @@ namespace ApiRefrigerator.Controllers
         /// </remarks>
         /// <returns>A response confirming the addition of the item and its location in the refrigerator.</returns>
         [HttpPost()]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> InsertItem([FromBody] CreateRefrigeratorItemDTO item)
         {
             try
             {
-                var createItem = _mapper.Map<Refrigerator>(item);
-                var insertedItem = await _service.InsertItemAsync(createItem);
+                var inserirItem = _mapper.Map<Refrigerator>(item);
 
-                return CreatedAtAction(nameof(InsertItem), new
-                {
-                    Mensagem = $"{item.Name} is stored on floor {item.Floor}, container {item.Container}, and position {item.Position} in the refrigerator."
-                }, insertedItem);
+                await _service.InsertItemAsync(inserirItem);
+
+                return Ok(new { Mensagem = $"{item.Name} is stored on floor {item.Floor}, container {item.Container}, and position {item.Position} in the refrigerator." });
             }
             catch (ApplicationException ex)
             {
@@ -157,6 +155,40 @@ namespace ApiRefrigerator.Controllers
         }
 
         /// <summary>
+        /// Adds multiple items to the refrigerator.
+        /// </summary>
+        /// <param name="items">A list of DTOs containing the data for the items to be added.</param>
+        /// <returns>A response confirming the addition of the items.</returns>
+        [HttpPost("add-grocery")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> InsertItems([FromBody] CreateRefrigeratorItemsDTO items)
+        {
+            try
+            {
+                var createItems = _mapper.Map<IEnumerable<Refrigerator>>(items);
+                var insertedItems = await _service.InsertItemsAsync(createItems);
+                if (insertedItems is null)
+                    throw new ApplicationException("Something went wrong while adding the items. Please try again.");
+
+                return CreatedAtAction(nameof(InsertItems), null, new
+                {
+                    Data = insertedItems,
+                    Message = $"{insertedItems.Count()} items were added successfully to the refrigerator."
+                });
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return StatusCode(500, "Oops! Something went wrong while adding the items. Please try again.");
+            }
+        }
+
+        /// <summary>
         /// Updates an existing item in the refrigerator.
         /// </summary>
         /// <param name="item">The DTO containing the data for the item to be updated.</param>
@@ -164,7 +196,7 @@ namespace ApiRefrigerator.Controllers
         /// This endpoint updates an existing item in the refrigerator based on the provided data.
         /// </remarks>
         /// <returns>A response confirming the update of the item and its new location in the refrigerator.</returns>
-        [HttpPatch()]
+        [HttpPut()]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -195,7 +227,7 @@ namespace ApiRefrigerator.Controllers
         /// This endpoint removes an item from the refrigerator based on the provided ID.
         /// </remarks>
         /// <returns>A response confirming the removal of the item or an error message if the item is not found.</returns>
-        [HttpDelete("remove-item/{id:int}")]
+        [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -228,7 +260,7 @@ namespace ApiRefrigerator.Controllers
         /// This endpoint performs a complete cleanup of the refrigerator, removing all items.
         /// </remarks>
         /// <returns>A response confirming the removal of all items or an error message.</returns>
-        [HttpDelete("remove-all")]
+        [HttpDelete("deep-cleaning")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -252,4 +284,4 @@ namespace ApiRefrigerator.Controllers
     }
 }
 
-// Exercício por Marina Varela
+// Developed by Marina Varela
