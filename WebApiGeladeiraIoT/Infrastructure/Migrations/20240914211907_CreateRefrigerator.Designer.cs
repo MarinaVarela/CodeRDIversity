@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(RefrigeratorContext))]
-    [Migration("20240914204802_CreateRefrigerator")]
+    [Migration("20240914211907_CreateRefrigerator")]
     partial class CreateRefrigerator
     {
         /// <inheritdoc />

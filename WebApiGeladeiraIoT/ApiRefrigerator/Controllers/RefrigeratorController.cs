@@ -50,7 +50,7 @@ namespace ApiRefrigerator.Controllers
             try
             {
                 var items = await _service.GetAllAsync();
-                return Ok(new { Data = items, Mensagem = "Enjoy your item(s)." });
+                return Ok(new { Data = items, Message = "Enjoy your item(s)." });
             }
             catch (InvalidDataException)
             {
@@ -80,9 +80,9 @@ namespace ApiRefrigerator.Controllers
             {
                 var item = await _service.GetByIdAsync(id);
                 if (item is null)
-                    return NotFound(new { Mensagem = $"Item {id} not found." });
+                    return NotFound(new { Message = $"Item {id} not found." });
 
-                return Ok(new { Data = item, Mensagem = "Enjoy your item." });
+                return Ok(new { Data = item, Message = "Enjoy your item." });
             }
             catch
             {
@@ -112,9 +112,9 @@ namespace ApiRefrigerator.Controllers
 
                 var item = await _service.GetByNameAsync(name);
                 if (item is null)
-                    return NotFound(new { Mensagem = $"There is no item named {name} in the refrigerator." });
+                    return NotFound(new { Message = $"There is no item named {name} in the refrigerator." });
 
-                return Ok(new { Data = item, Mensagem = $"Enjoy your {name}." });
+                return Ok(new { Data = item, Message = $"Enjoy your {name}." });
             }
             catch
             {
@@ -142,7 +142,7 @@ namespace ApiRefrigerator.Controllers
 
                 await _service.InsertItemAsync(inserirItem);
 
-                return Ok(new { Mensagem = $"{item.Name} is stored on floor {item.Floor}, container {item.Container}, and position {item.Position} in the refrigerator." });
+                return Ok(new { Message = $"{item.Name} is stored on floor {item.Floor}, container {item.Container}, and position {item.Position} in the refrigerator." });
             }
             catch (ApplicationException ex)
             {
@@ -207,7 +207,7 @@ namespace ApiRefrigerator.Controllers
                 var editItem = _mapper.Map<Refrigerator>(item);
                 await _service.UpdateItemAsync(editItem);
 
-                return Ok(new { Mensagem = $"{item.Name} has been updated to floor {item.Floor}, container {item.Container}, and position {item.Position} in the refrigerator." });
+                return Ok(new { Message = $"{item.Name} has been updated to floor {item.Floor}, container {item.Container}, and position {item.Position} in the refrigerator." });
             }
             catch (ApplicationException ex)
             {
