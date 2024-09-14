@@ -15,7 +15,7 @@ namespace ApiRefrigerator.Repository
             _context = context;
         }
 
-        public async Task<List<Refrigerator>> GetAllAsync()
+        public async Task<IEnumerable<Refrigerator>> GetAllAsync()
         {
             var items = await _context.Refrigerator.ToListAsync();
             if (!items.Any())
@@ -48,6 +48,20 @@ namespace ApiRefrigerator.Repository
                 _context.Refrigerator.Add(item);
                 await _context.SaveChangesAsync();
                 return item;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<Refrigerator>?> InsertItemsAsync(IEnumerable<Refrigerator> items)
+        {
+            try
+            {
+                await _context.Refrigerator.AddRangeAsync(items);
+                await _context.SaveChangesAsync();
+                return items;
             }
             catch
             {
@@ -103,7 +117,7 @@ namespace ApiRefrigerator.Repository
                     await _context.SaveChangesAsync();
                 }
                 else { return 0; }
-                return existItem.Count;
+                return existItem.Count();
             }
             catch
             {

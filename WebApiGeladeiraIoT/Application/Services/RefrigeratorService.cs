@@ -12,14 +12,14 @@ namespace Application.Services
             _repository = repository;
         }
 
-        public async Task<List<Refrigerator>> GetAllAsync()
+        public async Task<IEnumerable<Refrigerator>> GetAllAsync()
         {
             return await _repository.GetAllAsync();
         } 
 
-        public Task<Refrigerator?> GetByIdAsync(int id)
+        public async Task<Refrigerator?> GetByIdAsync(int id)
         {
-            return _repository.GetByIdAsync(id);
+            return await _repository.GetByIdAsync(id);
         }
 
         public async Task<Refrigerator?> GetByNameAsync(string name)
@@ -40,6 +40,16 @@ namespace Application.Services
                 throw new ApplicationException("Failed to add item.");
 
             return item;
+        }
+
+        public async Task<IEnumerable<Refrigerator>?> InsertItemsAsync(IEnumerable<Refrigerator> items)
+        {
+            var result = await _repository.InsertItemsAsync(items);
+
+            if (result is null)
+                throw new ApplicationException("Failed to add items.");
+
+            return items;
         }
 
         public async Task<Refrigerator?> UpdateItemAsync(Refrigerator item)

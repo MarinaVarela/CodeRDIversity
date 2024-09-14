@@ -17,5 +17,15 @@ namespace ApiRefrigerator.DTOs
         [StringLength(100, ErrorMessage = "The name must have a maximum of 100 characters.")]
         public required string Name { get; set; }
     }
+
+    public class CreateRefrigeratorItemsDTO
+    {
+        public IEnumerable<CreateRefrigeratorItemDTO> Items { get; set; }
+
+        public CreateRefrigeratorItemsDTO()
+        {
+            Items = [];
+        }
+    }
 }
 
