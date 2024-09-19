@@ -14,9 +14,11 @@ namespace Infrastructure.Config
                         @"<H2>API for Managing Refrigerator Items</H2>
                                 <p> Developed by Marina Varela.</p>
                                 <br>
-                            <H4> IDE and Framework Version </H4>
+                            <H4>IDE and Framework Version </H4>
                                 <p> The project was developed using Visual Studio, with .NET 8.</p>
-                            <H4> Persistence and Database</H4>
+                            <H4>Unit Tests</H4>
+                                <p> Unit tests are written using the xUnit framework, with AAA pattern. These tests focus on validating the core functionality of the service, covering CRUD operations and exception handling.</p>
+                            <H4>Persistence and Database</H4>
                                 <p> Migration added with the following commands:</p>
                                 <ul>
                                     <li> Add-Migration CreateRefrigerator: Creates the migration based on the model.</li>
