@@ -17,5 +17,12 @@ namespace Infrastructure.Context
         {
             base.OnModelCreating(modelBuilder);
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            string connectionString = "Server=localhost;Database=db_refrigerator;Trusted_Connection=True;TrustServerCertificate=True;";
+            optionsBuilder.UseSqlServer(connectionString)
+                          .EnableSensitiveDataLogging();
+        }
     }
 }

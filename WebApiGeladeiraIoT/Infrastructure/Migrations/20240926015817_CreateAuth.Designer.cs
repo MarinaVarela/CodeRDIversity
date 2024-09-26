@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(RefrigeratorContext))]
-    [Migration("20240926000753_CreateAuth")]
+    [Migration("20240926015817_CreateAuth")]
     partial class CreateAuth
     {
         /// <inheritdoc />
