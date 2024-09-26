@@ -34,8 +34,10 @@ namespace ApiRefrigerator.Controllers
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] RegisterUserDTO dto)
         {
+            try { 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -58,6 +60,11 @@ namespace ApiRefrigerator.Controllers
             }
 
             return BadRequest(ModelState);
+            }
+            catch
+            {
+                return StatusCode(500, "Oops! I think the refrigerator door is stuck. Call the support to fix it.");
+            }
         }
 
         /// <summary>
@@ -74,8 +81,12 @@ namespace ApiRefrigerator.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO dto)
         {
+            try
+            {
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -88,6 +99,11 @@ namespace ApiRefrigerator.Controllers
             }
 
             return Unauthorized(new { message = "Invalid login attempt." });
+            }
+            catch
+            {
+                return StatusCode(500, "Oops! I think the refrigerator door is stuck. Call the support to fix it.");
+            }
         }
 
         private async Task<ActionResult> LoginSuccess(ApplicationUser user)
