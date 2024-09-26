@@ -2,10 +2,12 @@ using ApiRefrigerator.DTOs;
 using ApiRefrigerator.Models;
 using AutoMapper;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiRefrigerator.Controllers
 {
+    [Authorize]
     [Route("api/refrigerator")]
     [ApiController]
     public class RefrigeratorController : ControllerBase
@@ -28,6 +30,7 @@ namespace ApiRefrigerator.Controllers
         /// <returns>A response with the 'Allow' header indicating the supported methods.</returns>
         [HttpOptions()]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult OpcoesDisponiveis()
         {
             Response.Headers.Append("Allow", "GET, POST, PATCH, DELETE, OPTIONS");
@@ -45,6 +48,7 @@ namespace ApiRefrigerator.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -73,6 +77,7 @@ namespace ApiRefrigerator.Controllers
         [HttpGet("get-item/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(int id)
         {
@@ -101,6 +106,7 @@ namespace ApiRefrigerator.Controllers
         [HttpGet("search-refrigerator/{name}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByName(string name)
@@ -122,7 +128,7 @@ namespace ApiRefrigerator.Controllers
             }
         }
 
-                /// <summary>
+        /// <summary>
         /// Adds a new item to the refrigerator.
         /// </summary>
         /// <param name="item">The DTO containing the data for the item to be added.</param>
@@ -133,6 +139,7 @@ namespace ApiRefrigerator.Controllers
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> InsertItem([FromBody] CreateRefrigeratorItemDTO item)
         {
@@ -162,6 +169,7 @@ namespace ApiRefrigerator.Controllers
         [HttpPost("add-grocery")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> InsertItems([FromBody] CreateRefrigeratorItemsDTO items)
         {
@@ -199,6 +207,7 @@ namespace ApiRefrigerator.Controllers
         [HttpPut()]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateItem([FromBody] UpdateRefrigeratorItemDTO item)
         {
@@ -229,8 +238,9 @@ namespace ApiRefrigerator.Controllers
         /// <returns>A response confirming the removal of the item or an error message if the item is not found.</returns>
         [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(object))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoveItem(int id)
         {
@@ -262,6 +272,7 @@ namespace ApiRefrigerator.Controllers
         /// <returns>A response confirming the removal of all items or an error message.</returns>
         [HttpDelete("deep-cleaning")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoveAllItems()

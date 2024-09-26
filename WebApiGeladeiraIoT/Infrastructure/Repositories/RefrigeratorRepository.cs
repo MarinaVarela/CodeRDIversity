@@ -1,6 +1,6 @@
 ﻿using ApiRefrigerator.Models;
 using Domain.Interfaces;
-using Infrastructure.Repositories;
+using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiRefrigerator.Repository
